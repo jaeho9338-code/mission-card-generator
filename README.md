@@ -5,28 +5,34 @@
 
 ---
 
-## 시작하기 전에
+## ▶ 매번 쓸 때 — 이것만 하면 됩니다
 
-- **Node.js 22+** 필요 (`nvm install 22`로 설치)
-- **Anthropic API 키** 필요 (claude.ai 또는 console.anthropic.com에서 발급)
+터미널을 열고 아래 한 줄 붙여넣기 → 엔터
+
+```bash
+source ~/.nvm/nvm.sh && cd ~/Desktop/mission-card-generator && npm run dev
+```
+
+그 다음 브라우저에서 **http://localhost:3000** 접속.
+
+끝내려면 터미널에서 `Ctrl + C`.
 
 ---
 
-## 설치 및 실행
+## 처음 한 번만 — 최초 설치 시
 
 ```bash
-# 1. 의존성 설치
-npm install
+# 1. 프로젝트 폴더로 이동
+cd ~/Desktop/mission-card-generator
 
-# 2. 환경 변수 설정
-cp .env.local.example .env.local
-# .env.local 파일을 열어 ANTHROPIC_API_KEY 값을 채워 넣으세요
+# 2. 패키지 설치
+source ~/.nvm/nvm.sh && npm install
 
-# 3. 개발 서버 실행
-source ~/.nvm/nvm.sh && npm run dev
+# 3. API 키 파일 생성 (sk-ant-... 부분을 실제 키로 교체)
+echo 'ANTHROPIC_API_KEY=sk-ant-여기에실제키입력' > .env.local
 ```
 
-브라우저에서 **http://localhost:3000** 접속
+API 키는 **console.anthropic.com** → API Keys 메뉴에서 발급.
 
 ---
 
