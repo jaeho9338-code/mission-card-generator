@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
+import type { MissionCard } from "./api/generate-mission/route";
 
-// 회차별 주제 — 미션 생성 맥락 표시용
+// 회차별 주제 — 드롭다운 표시용
 const SESSION_TOPICS: Record<number, string> = {
   1: "처음 만남 — 왜 AI인가",
   2: "AI에게 시키는 법",
@@ -21,11 +22,43 @@ export default function Home() {
   const [interest, setInterest] = useState("");
   const [missionType, setMissionType] = useState<"현장" | "과제">("현장");
 
+  const [result, setResult] = useState<MissionCard | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const isReady = studentName.trim() !== "" && interest.trim() !== "";
 
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      const res = await fetch("/api/generate-mission", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionNumber: session,
+          studentName,
+          interest,
+          missionType,
+        }),
+      });
+
+      if (!res.ok) throw new Error("서버 오류");
+      const data: MissionCard = await res.json();
+      setResult(data);
+    } catch {
+      setError("미션 생성 중 오류가 발생했습니다. API 키와 네트워크를 확인해 주세요.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
-    <main className="min-h-screen bg-bg flex items-start justify-center px-6 py-16">
-      <div className="w-full max-w-lg">
+    <main className="min-h-screen bg-bg px-6 py-16">
+      <div className="w-full max-w-lg mx-auto">
 
         {/* 헤더 */}
         <header className="mb-12">
@@ -41,13 +74,11 @@ export default function Home() {
         </header>
 
         {/* 입력 폼 */}
-        <form className="space-y-7" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-7" onSubmit={handleSubmit}>
 
           {/* 회차 선택 */}
           <div>
-            <label className="block text-sm font-medium text-fg mb-2">
-              회차
-            </label>
+            <label className="block text-sm font-medium text-fg mb-2">회차</label>
             <select
               value={session}
               onChange={(e) => setSession(Number(e.target.value))}
@@ -63,9 +94,7 @@ export default function Home() {
 
           {/* 학생 이름 */}
           <div>
-            <label className="block text-sm font-medium text-fg mb-2">
-              학생 이름
-            </label>
+            <label className="block text-sm font-medium text-fg mb-2">학생 이름</label>
             <input
               type="text"
               value={studentName}
@@ -77,9 +106,7 @@ export default function Home() {
 
           {/* 관심 분야 */}
           <div>
-            <label className="block text-sm font-medium text-fg mb-2">
-              관심 분야
-            </label>
+            <label className="block text-sm font-medium text-fg mb-2">관심 분야</label>
             <input
               type="text"
               value={interest}
@@ -92,11 +119,9 @@ export default function Home() {
             </p>
           </div>
 
-          {/* 미션 종류 — 토글 카드 */}
+          {/* 미션 종류 토글 */}
           <div>
-            <label className="block text-sm font-medium text-fg mb-3">
-              미션 종류
-            </label>
+            <label className="block text-sm font-medium text-fg mb-3">미션 종류</label>
             <div className="grid grid-cols-2 gap-3">
               {(["현장", "과제"] as const).map((type) => (
                 <button
@@ -123,19 +148,96 @@ export default function Home() {
           {/* 생성 버튼 */}
           <button
             type="submit"
-            disabled={!isReady}
+            disabled={!isReady || isLoading}
             className="w-full py-4 bg-accent text-white rounded-lg text-sm font-medium tracking-wide hover:bg-accent-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            미션 카드 생성하기
+            {isLoading ? "미션 생성 중..." : "미션 카드 생성하기"}
           </button>
 
-          {!isReady && (
+          {!isReady && !isLoading && (
             <p className="text-center text-xs text-muted -mt-4">
               이름과 관심 분야를 입력하면 버튼이 활성화됩니다.
             </p>
           )}
         </form>
+
+        {/* 오류 메시지 */}
+        {error && (
+          <div className="mt-8 p-4 border border-red-200 rounded-lg bg-red-50 text-sm text-red-600">
+            {error}
+          </div>
+        )}
+
+        {/* 생성 결과 미리보기 */}
+        {result && (
+          <section className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-serif text-lg font-bold text-fg">생성된 미션 카드</h2>
+              <button
+                onClick={() => setResult(null)}
+                className="text-xs text-muted hover:text-accent transition-colors"
+              >
+                닫기
+              </button>
+            </div>
+
+            <div className="border border-border rounded-xl overflow-hidden">
+              {/* 카드 헤더 */}
+              <div className="bg-accent px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-white text-xs font-medium tracking-widest uppercase">
+                    {result.missionType} 미션
+                  </span>
+                  <span className="text-white text-xs opacity-80">
+                    MISSION-0{result.sessionNumber}
+                  </span>
+                </div>
+                <p className="text-white font-serif text-lg font-bold mt-1">
+                  {result.sessionNumber}회차 — {result.sessionTopic}
+                </p>
+                <p className="text-white text-xs opacity-70 mt-0.5">
+                  {result.studentName} · 기르는 능력: {result.skills}
+                </p>
+              </div>
+
+              {/* 카드 본문 */}
+              <div className="divide-y divide-border">
+                <CardRow label="의뢰인" value={result.client} />
+                <CardRow label="상황" value={result.situation} />
+                <CardRow label="최종 산출물" value={result.deliverable} />
+                <div className="px-6 py-4">
+                  <p className="text-xs text-muted mb-2">제약</p>
+                  <ul className="space-y-1">
+                    {result.constraints.map((c, i) => (
+                      <li key={i} className="text-sm text-fg flex gap-2">
+                        <span className="text-accent">—</span>
+                        <span>{c}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <CardRow label="성공 기준" value={result.successCriteria} />
+                <CardRow label="심사관" value={result.judge} />
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs text-center text-muted">
+              PDF 다운로드는 4단계에서 추가됩니다.
+            </p>
+          </section>
+        )}
+
       </div>
     </main>
+  );
+}
+
+// 카드 행 컴포넌트
+function CardRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="px-6 py-4">
+      <p className="text-xs text-muted mb-1">{label}</p>
+      <p className="text-sm text-fg leading-relaxed">{value}</p>
+    </div>
   );
 }
