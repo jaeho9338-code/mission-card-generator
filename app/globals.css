@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@import "pretendard/dist/web/variable/pretendardvariable.css";
+
+/* 디자인 토큰 — 따뜻한 오렌지 포인트, 여백 중심 톤 */
+:root {
+  --color-bg: #ffffff;
+  --color-fg: #1a1a1a;
+  --color-accent: #d4875c;
+  --color-accent-light: #f0c4a8;
+  --color-accent-dark: #b06840;
+  --color-muted: #6b6b6b;
+  --color-border: #e5e5e5;
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-fg: var(--color-fg);
+  --color-accent: var(--color-accent);
+  --color-accent-light: var(--color-accent-light);
+  --color-accent-dark: var(--color-accent-dark);
+  --color-muted: var(--color-muted);
+  --color-border: var(--color-border);
+  --font-sans: "Pretendard Variable", sans-serif;
+  --font-serif: var(--font-noto-serif-kr), serif;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: "Pretendard Variable", sans-serif;
+}
