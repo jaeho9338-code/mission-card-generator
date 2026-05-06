@@ -24,9 +24,34 @@ export default function Home() {
 
   const [result, setResult] = useState<MissionCard | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isReady = studentName.trim() !== "" && interest.trim() !== "";
+
+  async function handleDownload() {
+    if (!result) return;
+    setIsDownloading(true);
+    try {
+      const res = await fetch("/api/download-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result),
+      });
+      if (!res.ok) throw new Error("PDF 생성 실패");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `미션카드_${result.sessionNumber}회차_${result.studentName}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setError("PDF 생성 중 오류가 발생했습니다.");
+    } finally {
+      setIsDownloading(false);
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -221,9 +246,13 @@ export default function Home() {
               </div>
             </div>
 
-            <p className="mt-4 text-xs text-center text-muted">
-              PDF 다운로드는 4단계에서 추가됩니다.
-            </p>
+                    <button
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className="mt-5 w-full py-4 border border-accent text-accent rounded-lg text-sm font-medium tracking-wide hover:bg-accent hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {isDownloading ? "PDF 생성 중..." : "PDF 다운로드"}
+            </button>
           </section>
         )}
 
