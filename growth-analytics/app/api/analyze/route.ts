@@ -124,7 +124,13 @@ highlights 규칙:
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ error: "ANTHROPIC_API_KEY 가 설정되지 않았습니다." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error:
+          "ANTHROPIC_API_KEY 가 설정되지 않았습니다. growth-analytics/.env.local 파일에 ANTHROPIC_API_KEY=sk-ant-... 를 추가하고 서버를 재시작하세요.",
+      },
+      { status: 500 }
+    );
   }
 
   const client = new Anthropic({ apiKey });
