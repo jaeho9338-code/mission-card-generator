@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { StudentData } from "@/lib/types";
 import { AnalysisResult } from "@/lib/analysisTypes";
 import HeroSection from "@/components/HeroSection";
+import BeforeAfterSection from "@/components/BeforeAfterSection";
 
 export default function ReportTab() {
   const [students, setStudents] = useState<StudentData[]>([]);
@@ -12,6 +13,8 @@ export default function ReportTab() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  // 분석에 사용된 원문 프롬프트 (비포/애프터 구역용)
+  const [analyzedPrompts, setAnalyzedPrompts] = useState<{ round: number; prompt: string }[]>([]);
 
   const fetchStudents = useCallback(async () => {
     const res = await fetch("/api/students");
@@ -40,6 +43,7 @@ export default function ReportTab() {
     setLoading(true);
     setError(null);
     setResult(null);
+    setAnalyzedPrompts([]);
 
     try {
       const res = await fetch("/api/analyze", {
@@ -54,6 +58,11 @@ export default function ReportTab() {
       }
       const data: AnalysisResult = await res.json();
       setResult(data);
+      // 원문 프롬프트 저장 (비포/애프터 구역용)
+      const prompts = selectedStudent?.sessions
+        .filter((s) => s.round <= maxRound)
+        .map((s) => ({ round: s.round, prompt: s.prompt })) ?? [];
+      setAnalyzedPrompts(prompts);
     } catch {
       setError("분석 중 오류가 발생했습니다.");
     } finally {
@@ -186,7 +195,9 @@ export default function ReportTab() {
           </p>
           {/* 구역 1 — 히어로 */}
           <HeroSection rounds={result.rounds} />
-          {/* 5~7단계 구역이 여기 추가됩니다 */}
+          {/* 구역 2 — 비포/애프터 */}
+          <BeforeAfterSection rounds={result.rounds} prompts={analyzedPrompts} />
+          {/* 6~7단계 구역이 여기 추가됩니다 */}
         </div>
       )}
     </div>
