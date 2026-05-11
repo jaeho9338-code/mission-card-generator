@@ -8,6 +8,7 @@ import BeforeAfterSection from "@/components/BeforeAfterSection";
 import StatsSection from "@/components/StatsSection";
 import SummarySection from "@/components/SummarySection";
 import ChartSection from "@/components/ChartSection";
+import { normalizeResult } from "@/lib/utils";
 
 export default function ReportTab() {
   const [students, setStudents] = useState<StudentData[]>([]);
@@ -67,7 +68,7 @@ export default function ReportTab() {
         return;
       }
       const data: AnalysisResult = await res.json();
-      setResult(data);
+      setResult(normalizeResult(data)); // overall을 클라이언트에서 직접 계산해 수학적 일관성 보장
 
       const prompts = selectedStudent?.sessions
         .filter((s) => s.round >= startRound && s.round <= endRound)

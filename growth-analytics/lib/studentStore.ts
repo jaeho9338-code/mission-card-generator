@@ -51,3 +51,27 @@ export function saveSession(
   fs.writeFileSync(filePath(name), JSON.stringify(data, null, 2), "utf-8");
   return data;
 }
+
+export function deleteSession(name: string, round: number): StudentData | null {
+  const data = loadStudent(name);
+  if (!data) return null;
+  data.sessions = data.sessions.filter((s) => s.round !== round);
+  fs.writeFileSync(filePath(name), JSON.stringify(data, null, 2), "utf-8");
+  return data;
+}
+
+export function deleteStudent(name: string): void {
+  const fp = filePath(name);
+  if (fs.existsSync(fp)) fs.unlinkSync(fp);
+}
+
+export function renameStudent(oldName: string, newName: string): StudentData {
+  const data = loadStudent(oldName);
+  if (!data) throw new Error("학생을 찾을 수 없습니다.");
+  const newFp = filePath(newName);
+  if (fs.existsSync(newFp)) throw new Error("이미 같은 이름의 학생이 있습니다.");
+  data.name = newName;
+  fs.writeFileSync(newFp, JSON.stringify(data, null, 2), "utf-8");
+  fs.unlinkSync(filePath(oldName));
+  return data;
+}

@@ -164,16 +164,20 @@ export default function StatsSection({ rounds }: Props) {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2
-        className="text-xs"
-        style={{
-          color: "var(--subtext)",
-          fontFamily: "Pretendard, sans-serif",
-          letterSpacing: "0.2em",
-        }}
-      >
-        10개 지표
-      </h2>
+      <div className="flex items-baseline justify-between">
+        <h2
+          className="text-xs"
+          style={{ color: "var(--subtext)", fontFamily: "Pretendard, sans-serif", letterSpacing: "0.2em" }}
+        >
+          10개 지표
+        </h2>
+        <p
+          className="text-xs"
+          style={{ color: "var(--subtext)", fontFamily: "Pretendard, sans-serif" }}
+        >
+          이 카드 점수들의 평균 = 위 종합 점수
+        </p>
+      </div>
 
       <div className="grid grid-cols-5 gap-3">
         {METRIC_KEYS.map((key) => {
