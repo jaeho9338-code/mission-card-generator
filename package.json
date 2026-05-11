@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "growth": "cd growth-analytics && npm run dev -- --port 3003"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.94.0",
