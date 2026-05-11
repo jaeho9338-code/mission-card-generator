@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { StudentData } from "@/lib/types";
 import { AnalysisResult } from "@/lib/analysisTypes";
+import HeroSection from "@/components/HeroSection";
 
 export default function ReportTab() {
   const [students, setStudents] = useState<StudentData[]>([]);
@@ -183,7 +184,9 @@ export default function ReportTab() {
           <p className="text-xs px-3 py-2 rounded" style={{ color: "var(--subtext)", background: "var(--panel)", fontFamily: "Pretendard, sans-serif", border: "1px solid var(--border)" }}>
             분석 완료 — {result.rounds.length}개 회차 ({result.rounds.map(r => `${r.round}회차`).join(", ")})
           </p>
-          {/* 4~7단계 구역이 여기 추가됩니다 */}
+          {/* 구역 1 — 히어로 */}
+          <HeroSection rounds={result.rounds} />
+          {/* 5~7단계 구역이 여기 추가됩니다 */}
         </div>
       )}
     </div>
