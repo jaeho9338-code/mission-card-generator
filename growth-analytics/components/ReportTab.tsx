@@ -6,6 +6,7 @@ import { AnalysisResult } from "@/lib/analysisTypes";
 import HeroSection from "@/components/HeroSection";
 import BeforeAfterSection from "@/components/BeforeAfterSection";
 import StatsSection from "@/components/StatsSection";
+import SummarySection from "@/components/SummarySection";
 
 export default function ReportTab() {
   const [students, setStudents] = useState<StudentData[]>([]);
@@ -200,7 +201,8 @@ export default function ReportTab() {
           <BeforeAfterSection rounds={result.rounds} prompts={analyzedPrompts} />
           {/* 구역 3 — 스탯 카드 */}
           <StatsSection rounds={result.rounds} />
-          {/* 7단계 구역이 여기 추가됩니다 */}
+          {/* 구역 4 — AI 총평 */}
+          <SummarySection summary={result.growth_summary} />
         </div>
       )}
     </div>
