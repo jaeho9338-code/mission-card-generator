@@ -208,8 +208,7 @@ export function MissionPDF({ card }: { card: MissionCard }) {
 
         {/* 푸터 */}
         <View style={styles.footer}>
-          <Text style={styles.footerAccent}>운영자 AI 과외</Text>
-          <Text style={styles.footerText}>removed@example.com · [redacted]</Text>
+          <Text style={styles.footerAccent}>AI 과외</Text>
         </View>
       </Page>
     </Document>

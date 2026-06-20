@@ -4,13 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 이 프로젝트
 
-부산 중학생 대상 AI 활용 과외(9회차)에서 매 회차 학생에게 줄 미션 카드를 자동 생성하는 도구입니다.
-운영자(운영자)가 본인 PC에서만 사용하는 1인용 웹 앱 — 배포 없음, 인증 없음, DB 없음.
+중학생 대상 AI 활용 과외(9회차)에서 매 회차 학생에게 줄 미션 카드를 자동 생성하는 도구입니다.
+운영자가 본인 PC에서만 사용하는 1인용 웹 앱 — 배포 없음, 인증 없음, DB 없음.
 학생의 회차·이름·관심 분야를 입력하면 Anthropic API로 미션 내용을 동적 생성하고, A4 PDF 한 장으로 다운로드합니다.
 
-## 운영자 정보
+## 운영 정보
 
-- 이름: 운영자
 - 수업 방식: 비대면 디스코드 과외 (주 1회 90~120분, 9회차)
 - 도메인 상세: `docs/CONTEXT.md` 참조
 
@@ -33,7 +32,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 mission-card-generator
 
 ### 사용자
-운영자(운영자) 한 사람만 본인 PC에서 사용. 배포 안 함.
+운영자 한 사람만 본인 PC에서 사용. 배포 안 함.
 
 ### 목적
 회차별 미션 카드를 학생 흥미에 맞춰 자동 생성. 매주 미션 짜는 부담 제거.
